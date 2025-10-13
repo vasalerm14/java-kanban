@@ -15,7 +15,7 @@ public class InMemoryTaskManagerTest {
     TaskManager manager;
 
     @BeforeEach
-    public void initManager(){
+    public void initManager() {
         manager = Managers.getDefault();
     }
 
@@ -31,7 +31,7 @@ public class InMemoryTaskManagerTest {
     }
 
     @Test
-    public void testAddTaskWithId(){
+    public void testAddTaskWithId() {
         Task task = new Task(42, "Test 1", "Testing task 1", TaskStatus.NEW);
         manager.addNewTask(task);
         assertEquals(1, manager.getTasks().size(), "task should be added");
@@ -40,7 +40,7 @@ public class InMemoryTaskManagerTest {
     }
 
     @Test
-    public void testAddTaskWithAndWithoutId(){
+    public void testAddTaskWithAndWithoutId() {
         Task task0 = new Task("Test 1", "Testing task 1", TaskStatus.NEW);
         Task task1 = new Task(1, "Test 2", "Testing task 2", TaskStatus.NEW);
         manager.addNewTask(task0);
@@ -66,34 +66,34 @@ public class InMemoryTaskManagerTest {
     }
 
     @Test
-    public void checkTaskUpdate(){
-        Task task = new Task(1,"Task 1","Test task",TaskStatus.NEW);
-        Task updateTask = new Task(1,"Task 1 new", "Test task new", TaskStatus.DONE);
+    public void checkTaskUpdate() {
+        Task task = new Task(1, "Task 1", "Test task", TaskStatus.NEW);
+        Task updateTask = new Task(1, "Task 1 new", "Test task new", TaskStatus.DONE);
         manager.addNewTask(task);
         manager.updateTask(updateTask);
-        assertEquals(1,manager.getTasks().size());
-        assertEquals(updateTask,manager.getTask(1));
+        assertEquals(1, manager.getTasks().size());
+        assertEquals(updateTask, manager.getTask(1));
     }
 
     @Test
-    public void checkSubTaskStatusUpdate(){
-        Epic epic = new Epic(1,"Epic","epic");
-        Subtask subtask = new Subtask(2,"Subtask","subtask",TaskStatus.NEW,1);
-        Subtask newSubtask = new Subtask(2,"Subtask","subtask",TaskStatus.DONE,1);
+    public void checkSubTaskStatusUpdate() {
+        Epic epic = new Epic(1, "Epic", "epic");
+        Subtask subtask = new Subtask(2, "Subtask", "subtask", TaskStatus.NEW, 1);
+        Subtask newSubtask = new Subtask(2, "Subtask", "subtask", TaskStatus.DONE, 1);
         manager.addNewEpic(epic);
         manager.addNewSubtask(subtask);
-        assertEquals(TaskStatus.NEW,manager.getEpic(1).getStatus());
+        assertEquals(TaskStatus.NEW, manager.getEpic(1).getStatus());
         manager.updateSubtask(newSubtask);
-        assertEquals(TaskStatus.DONE,manager.getEpic(1).getStatus());
+        assertEquals(TaskStatus.DONE, manager.getEpic(1).getStatus());
     }
 
     @Test
-    public void checkDeleteEpic(){
-        Epic epic = new Epic(1,"Epic","epic");
-        Subtask subtask = new Subtask(2,"Subtask","subtask",TaskStatus.NEW,1);
+    public void checkDeleteEpic() {
+        Epic epic = new Epic(1, "Epic", "epic");
+        Subtask subtask = new Subtask(2, "Subtask", "subtask", TaskStatus.NEW, 1);
         manager.addNewEpic(epic);
         manager.addNewSubtask(subtask);
         manager.deleteEpic(1);
-        assertEquals(0,manager.getSubtasks().size());
+        assertEquals(0, manager.getSubtasks().size());
     }
 }
