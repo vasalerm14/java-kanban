@@ -77,6 +77,6 @@ public class Task {
     }
 
     public String toCsvString(){
-        return String.format("%d,%s,%s,%s,%s,%s",getId(),TaskType.TASK,getName(),getStatus(),getDescription());
+        return String.format("%d,%s,%s,%s,%s",getId(),TaskType.TASK,getName(),getStatus(),getDescription());
     }
 }
