@@ -45,7 +45,7 @@ public class FileBackedTaskManagerTest {
 
     @Test
     @DisplayName("Проверка на корректную загрузку не пустого файла")
-    void TestLoadFromFile(){
+    void TestLoadFromFile() {
         FileBackedTaskManager loadManager = FileBackedTaskManager.loadFromFile(tempFile);
         assertEquals(1, loadManager.getTasks().size(), "Wrong task count");
         assertEquals(1, loadManager.getEpics().size(), "Wrong epic count");
@@ -54,47 +54,47 @@ public class FileBackedTaskManagerTest {
 
     @Test
     @DisplayName("Проверка на корреткную загрузку Тасков")
-    void checkTaskBackUp(){
+    void checkTaskBackUp() {
         FileBackedTaskManager loadManager = FileBackedTaskManager.loadFromFile(tempFile);
-        Task task = new Task(1,"Task1","Description task1",TaskStatus.NEW);
-        assertEquals(task,loadManager.getTask(1), "Wrong task backup");
+        Task task = new Task(1, "Task1", "Description task1", TaskStatus.NEW);
+        assertEquals(task, loadManager.getTask(1), "Wrong task backup");
     }
 
     @Test
     @DisplayName("Проверка на корректную загрузку Эпиков и Сабтасков")
-    void checkEpicAndSubtaskBackup(){
+    void checkEpicAndSubtaskBackup() {
         FileBackedTaskManager loadManager = FileBackedTaskManager.loadFromFile(tempFile);
-        Epic epic = new Epic(2,"Epic2","Description epic2");
-        Subtask subtask = new Subtask(3,"Sub Task2","Description sub task3",TaskStatus.DONE,2);
-        assertEquals(epic,loadManager.getEpic(2), "Wrong epic backup");
-        assertEquals(subtask,loadManager.getSubtask(3),"Wrong subtask backup");
+        Epic epic = new Epic(2, "Epic2", "Description epic2");
+        Subtask subtask = new Subtask(3, "Sub Task2", "Description sub task3", TaskStatus.DONE, 2);
+        assertEquals(epic, loadManager.getEpic(2), "Wrong epic backup");
+        assertEquals(subtask, loadManager.getSubtask(3), "Wrong subtask backup");
     }
 
     @Test
     @DisplayName("Проверка на сохранение нового таска")
-    void checkSaveNewTask() throws IOException{
+    void checkSaveNewTask() throws IOException {
         File emptyFile = File.createTempFile("kanban-empty-", ".csv");
         FileBackedTaskManager loadManager = FileBackedTaskManager.loadFromFile(emptyFile);
-        Task task = new Task(1,"Task1","Description task1",TaskStatus.NEW);
+        Task task = new Task(1, "Task1", "Description task1", TaskStatus.NEW);
         loadManager.addNewTask(task);
         FileBackedTaskManager reloaded = FileBackedTaskManager.loadFromFile(emptyFile);
         Task loadedTask = reloaded.getTasks().get(0);
-        assertEquals(task,loadedTask,"Wrong task save");
+        assertEquals(task, loadedTask, "Wrong task save");
     }
 
     @Test
     @DisplayName("Проверка на сохранение нового эпика и сабтаска")
-    void checkSaveEpicAndSubtask() throws IOException{
+    void checkSaveEpicAndSubtask() throws IOException {
         File emptyFile = File.createTempFile("kanban-empty-", ".csv");
         FileBackedTaskManager loadManager = FileBackedTaskManager.loadFromFile(emptyFile);
-        Epic epic = new Epic(2,"Epic2","Description epic2");
-        Subtask subtask = new Subtask(3,"Sub Task2","Description sub task3",TaskStatus.DONE,1);
+        Epic epic = new Epic(2, "Epic2", "Description epic2");
+        Subtask subtask = new Subtask(3, "Sub Task2", "Description sub task3", TaskStatus.DONE, 1);
         loadManager.addNewEpic(epic);
         loadManager.addNewSubtask(subtask);
         FileBackedTaskManager reloaded = FileBackedTaskManager.loadFromFile(emptyFile);
         Epic loadedEpic = reloaded.getEpic(1);
         Subtask loadedSubtask = reloaded.getSubtask(2);
-        assertEquals(epic,loadedEpic,"Wrong epic save");
-        assertEquals(subtask,loadedSubtask,"Wrong subtask save");
+        assertEquals(epic, loadedEpic, "Wrong epic save");
+        assertEquals(subtask, loadedSubtask, "Wrong subtask save");
     }
 }

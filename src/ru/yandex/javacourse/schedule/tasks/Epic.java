@@ -43,7 +43,7 @@ public class Epic extends Task {
                 '}';
     }
 
-    public String toCsvString(){
-        return String.format("%d,%s,%s,%s,%s",getId(),TaskType.EPIC,getName(),getStatus(),getDescription());
+    public String toCsvString() {
+        return String.format("%d,%s,%s,%s,%s", getId(), TaskType.EPIC, getName(), getStatus(), getDescription());
     }
 }
