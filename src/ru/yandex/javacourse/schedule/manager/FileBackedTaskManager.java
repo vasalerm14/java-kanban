@@ -15,13 +15,14 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     private File file;
 
 
+
     public FileBackedTaskManager(File file) {
         this.file = file;
     }
 
     @Override
     public int addNewTask(Task task) {
-        int id = super.addNewTask(task);
+        int id = super.addWithId(task);
         save();
         return id;
     }
@@ -114,16 +115,36 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         }
     }
 
+    @Override
+    protected int addWithId(Task task){
+        int id = super.addWithId(task);
+        save();
+        return id;
+    }
+
+    @Override
+    protected int addWithId(Epic epic) {
+        int id = super.addWithId(epic);
+        save();
+        return id;
+    }
+
+    @Override
+    protected int addWithId(Subtask subtask){
+        int id = super.addWithId(subtask);
+        save();
+        return id;
+    }
     private void addWithoutSaving(Task task) {
-        super.addNewTask(task);
+        super.addWithId(task);
     }
 
     private void addWithoutSaving(Epic epic) {
-        super.addNewEpic(epic);
+        super.addWithId(epic);
     }
 
     private void addWithoutSaving(Subtask subtask) {
-        super.addNewSubtask(subtask);
+        super.addWithId(subtask);
     }
 
 

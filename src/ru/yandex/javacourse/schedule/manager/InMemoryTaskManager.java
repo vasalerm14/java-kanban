@@ -210,4 +210,32 @@ public class InMemoryTaskManager implements TaskManager {
         }
         epic.setStatus(status);
     }
+
+    protected void updateGeneratorId(int id) {
+        if(generatorId < id){
+            generatorId = id + 1;
+        }
+    }
+
+    protected int getGeneratorId(){
+        return generatorId;
+    }
+
+    protected int addWithId(Task task) {
+        updateGeneratorId(task.getId());
+        tasks.put(task.getId(), task);
+        return task.getId();
+    }
+
+    protected int addWithId(Epic epic) {
+        updateGeneratorId(epic.getId());
+        epics.put(epic.getId(), epic);
+        return epic.getId();
+    }
+
+    protected int addWithId(Subtask subtask) {
+        updateGeneratorId(subtask.getId());
+        subtasks.put(subtask.getId(), subtask);
+        return subtask.getId();
+    }
 }
