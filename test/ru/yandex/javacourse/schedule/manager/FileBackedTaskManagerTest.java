@@ -3,6 +3,7 @@ package ru.yandex.javacourse.schedule.manager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import ru.yandex.javacourse.schedule.exceptions.AddTaskWithIdException;
 import ru.yandex.javacourse.schedule.tasks.Epic;
 import ru.yandex.javacourse.schedule.tasks.Subtask;
 import ru.yandex.javacourse.schedule.tasks.Task;
@@ -13,9 +14,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class FileBackedTaskManagerTest {
-    FileBackedTaskManager manager;
     private File tempFile;
 
     @BeforeEach
@@ -95,5 +96,13 @@ public class FileBackedTaskManagerTest {
         Subtask loadedSubtask = reloaded.getSubtask(3);
         assertEquals(epic, loadedEpic, "Wrong epic save");
         assertEquals(subtask, loadedSubtask, "Wrong subtask save");
+    }
+
+    @Test
+    @DisplayName("Проверка на защиту от сохранения двух задач с одним id")
+    void checkSaveWithSameID(){
+        FileBackedTaskManager loadManager = FileBackedTaskManager.loadFromFile(tempFile);
+        Task task = new Task(1, "Task1", "Description task1", TaskStatus.NEW);
+        assertThrows(AddTaskWithIdException.class,() -> loadManager.addWithId(task));
     }
 }
