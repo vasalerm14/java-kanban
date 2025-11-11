@@ -100,9 +100,9 @@ public class FileBackedTaskManagerTest {
 
     @Test
     @DisplayName("Проверка на защиту от сохранения двух задач с одним id")
-    void checkSaveWithSameID(){
+    void checkSaveWithSameID() {
         FileBackedTaskManager loadManager = FileBackedTaskManager.loadFromFile(tempFile);
         Task task = new Task(1, "Task1", "Description task1", TaskStatus.NEW);
-        assertThrows(AddTaskWithIdException.class,() -> loadManager.addWithId(task));
+        assertThrows(AddTaskWithIdException.class, () -> loadManager.addWithId(task));
     }
 }

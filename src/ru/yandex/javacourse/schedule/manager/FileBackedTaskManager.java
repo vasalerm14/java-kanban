@@ -15,7 +15,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     private File file;
 
 
-
     public FileBackedTaskManager(File file) {
         this.file = file;
     }
@@ -116,7 +115,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    protected int addWithId(Task task){
+    protected int addWithId(Task task) {
         int id = super.addWithId(task);
         save();
         return id;
@@ -130,11 +129,12 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    protected int addWithId(Subtask subtask){
+    protected int addWithId(Subtask subtask) {
         int id = super.addWithId(subtask);
         save();
         return id;
     }
+
     private void addWithoutSaving(Task task) {
         super.addWithId(task);
     }
