@@ -75,4 +75,8 @@ public class Task {
                 ", description='" + description + '\'' +
                 '}';
     }
+
+    public String toCsvString() {
+        return String.format("%d,%s,%s,%s,%s", getId(), TaskType.TASK, getName(), getStatus(), getDescription());
+    }
 }

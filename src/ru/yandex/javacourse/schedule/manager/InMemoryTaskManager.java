@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import ru.yandex.javacourse.schedule.exceptions.AddTaskWithIdException;
 import ru.yandex.javacourse.schedule.tasks.Epic;
 import ru.yandex.javacourse.schedule.tasks.Subtask;
 import ru.yandex.javacourse.schedule.tasks.Task;
@@ -209,5 +210,32 @@ public class InMemoryTaskManager implements TaskManager {
             return;
         }
         epic.setStatus(status);
+    }
+
+    protected void updateGeneratorId(int id) {
+        if (tasks.containsKey(id) || epics.containsKey(id) || subtasks.containsKey(id)) {
+            throw new AddTaskWithIdException("Задача с ID: " + id + " уже существует");
+        }
+        if (id > generatorId) {
+            generatorId = id;
+        }
+    }
+
+    protected int addWithId(Task task) {
+        updateGeneratorId(task.getId());
+        tasks.put(task.getId(), task);
+        return task.getId();
+    }
+
+    protected int addWithId(Epic epic) {
+        updateGeneratorId(epic.getId());
+        epics.put(epic.getId(), epic);
+        return epic.getId();
+    }
+
+    protected int addWithId(Subtask subtask) {
+        updateGeneratorId(subtask.getId());
+        subtasks.put(subtask.getId(), subtask);
+        return subtask.getId();
     }
 }

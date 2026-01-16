@@ -27,4 +27,8 @@ public class Subtask extends Task {
                 ", description='" + description + '\'' +
                 '}';
     }
+
+    public String toCsvString() {
+        return String.format("%d,%s,%s,%s,%s,%s", getId(), TaskType.SUBTASK, getName(), getStatus(), getDescription(), getEpicId());
+    }
 }
