@@ -9,6 +9,8 @@ import java.io.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
 
@@ -21,7 +23,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     @Override
     public int addNewTask(Task task) {
-        int id = super.addWithId(task);
+        int id = super.addNewTask(task);
         save();
         return id;
     }
@@ -96,18 +98,15 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     private void save() {
         try (Writer writer = new FileWriter(file)) {
-            writer.append("id,type,name,status,description,epic\n");
-
+            writer.write("id,type,name,status,description,epic,startTime,duration\n");
             for (Task task : super.getTasks()) {
-                writer.append(task.toCsvString() + "\n");
+                writer.write(task.toCsvString() + "\n");
             }
-
             for (Epic epic : super.getEpics()) {
-                writer.append(epic.toCsvString() + "\n");
+                writer.write(epic.toCsvString() + "\n");
             }
-
             for (Subtask subtask : super.getSubtasks()) {
-                writer.append(subtask.toCsvString() + "\n");
+                writer.write(subtask.toCsvString() + "\n");
             }
         } catch (IOException e) {
             throw new ManagerSaveException("Ошибка при сохранении файла " + file.getName(), e);
@@ -155,24 +154,42 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             while (reader.ready()) {
                 String line = reader.readLine();
                 String[] lineArr = line.split(",");
-                if (lineArr[1].equals("TASK")) {
-                    int id = Integer.parseInt(lineArr[0]);
-                    String name = lineArr[2];
-                    TaskStatus status = TaskStatus.valueOf(lineArr[3]);
-                    String description = lineArr[4];
-                    manager.addWithoutSaving(new Task(id, name, description, status));
-                } else if (lineArr[1].equals("EPIC")) {
-                    int id = Integer.parseInt(lineArr[0]);
-                    String name = lineArr[2];
-                    String description = lineArr[4];
-                    manager.addWithoutSaving(new Epic(id, name, description));
-                } else if (lineArr[1].equals("SUBTASK")) {
-                    int id = Integer.parseInt(lineArr[0]);
-                    String name = lineArr[2];
-                    TaskStatus status = TaskStatus.valueOf(lineArr[3]);
-                    String description = lineArr[4];
-                    int epicId = Integer.valueOf(lineArr[5]);
-                    manager.addWithoutSaving(new Subtask(id, name, description, status, epicId));
+                LocalDateTime startTime = null;
+                Duration duration = null;
+                if (lineArr.length > 6 && !lineArr[6].isEmpty()) {
+                    startTime = LocalDateTime.parse(lineArr[6]);
+                }
+                if (lineArr.length > 7 && !lineArr[7].isEmpty()) {
+                    duration = Duration.ofMinutes(Long.parseLong(lineArr[7]));
+                }
+                if ("TASK".equals(lineArr[1])) {
+                    Task task = new Task(
+                            Integer.parseInt(lineArr[0]),
+                            lineArr[2],
+                            lineArr[4],
+                            TaskStatus.valueOf(lineArr[3])
+                    );
+                    task.setStartTime(startTime);
+                    task.setDuration(duration);
+                    manager.addWithoutSaving(task);
+                } else if ("EPIC".equals(lineArr[1])) {
+                    Epic epic = new Epic(
+                            Integer.parseInt(lineArr[0]),
+                            lineArr[2],
+                            lineArr[4]
+                    );
+                    manager.addWithoutSaving(epic);
+                } else if ("SUBTASK".equals(lineArr[1])) {
+                    Subtask subtask = new Subtask(
+                            Integer.parseInt(lineArr[0]),
+                            lineArr[2],
+                            lineArr[4],
+                            TaskStatus.valueOf(lineArr[3]),
+                            Integer.parseInt(lineArr[5])
+                    );
+                    subtask.setStartTime(startTime);
+                    subtask.setDuration(duration);
+                    manager.addWithoutSaving(subtask);
                 }
             }
         } catch (IOException e) {
@@ -180,6 +197,5 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         }
         return manager;
     }
-
 
 }

@@ -1,21 +1,24 @@
 package ru.yandex.javacourse.schedule.tasks;
 
-import java.util.Objects;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 public class Task {
     protected int id;
     protected String name;
-    protected TaskStatus status;
     protected String description;
+    protected TaskStatus status;
+    protected Duration duration;
+    protected LocalDateTime startTime;
 
-    public Task(int id, String name, String description, TaskStatus status) {
-        this.id = id;
+    public Task(String name, String description, TaskStatus status) {
         this.name = name;
         this.description = description;
         this.status = status;
     }
 
-    public Task(String name, String description, TaskStatus status) {
+    public Task(int id, String name, String description, TaskStatus status) {
+        this.id = id;
         this.name = name;
         this.description = description;
         this.status = status;
@@ -29,20 +32,20 @@ public class Task {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public TaskStatus getStatus() {
         return status;
     }
 
     public void setStatus(TaskStatus status) {
         this.status = status;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getDescription() {
@@ -53,9 +56,33 @@ public class Task {
         this.description = description;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
+    public Duration getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Duration duration) {
+        this.duration = duration;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        if (startTime == null || duration == null) {
+            return null;
+        }
+        return startTime.plus(duration);
+    }
+
+    public String toCsvString() {
+        String start = startTime == null ? "" : startTime.toString();
+        String dur = duration == null ? "" : String.valueOf(duration.toMinutes());
+        return id + ",TASK," + name + "," + status + "," + description + ",," + start + "," + dur;
     }
 
     @Override
@@ -67,16 +94,7 @@ public class Task {
     }
 
     @Override
-    public String toString() {
-        return "Task{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", status='" + status + '\'' +
-                ", description='" + description + '\'' +
-                '}';
-    }
-
-    public String toCsvString() {
-        return String.format("%d,%s,%s,%s,%s", getId(), TaskType.TASK, getName(), getStatus(), getDescription());
+    public int hashCode() {
+        return Integer.hashCode(id);
     }
 }

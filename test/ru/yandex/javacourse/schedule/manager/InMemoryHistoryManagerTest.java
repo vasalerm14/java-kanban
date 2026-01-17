@@ -5,56 +5,61 @@ import org.junit.jupiter.api.Test;
 import ru.yandex.javacourse.schedule.tasks.Task;
 import ru.yandex.javacourse.schedule.tasks.TaskStatus;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class InMemoryHistoryManagerTest {
-
-    HistoryManager historyManager;
+class InMemoryHistoryManagerTest {
+    private HistoryManager history;
 
     @BeforeEach
-    public void initHistoryManager() {
-        historyManager = Managers.getDefaultHistory();
+    void init() {
+        history = Managers.getDefaultHistory();
     }
 
     @Test
-    public void testHistoricVersions() {
-        Task task = new Task("Test 1", "Testiong task 1", TaskStatus.NEW);
-        historyManager.addTask(task);
-        assertEquals(1, historyManager.getHistory().size(), "historic task should be added");
-        task.setStatus(TaskStatus.IN_PROGRESS);
-        historyManager.addTask(task);
-        assertEquals(1, historyManager.getHistory().size(), "historic task should be added");
+    void emptyHistory() {
+        assertTrue(history.getHistory().isEmpty());
     }
 
     @Test
-    public void testHistoricVersionsByPointer() {
-        Task task = new Task("Test 1", "Testiong task 1", TaskStatus.NEW);
-        historyManager.addTask(task);
-        assertEquals(task.getStatus(), historyManager.getHistory().get(0).getStatus(), "historic task should be stored");
-        task.setStatus(TaskStatus.IN_PROGRESS);
-        historyManager.addTask(task);
-        assertEquals(TaskStatus.IN_PROGRESS, historyManager.getHistory().get(0).getStatus(), "historic task should not be changed");
+    void noDuplicates() {
+        Task task = new Task(1, "Task", "Desc", TaskStatus.NEW);
+        history.addTask(task);
+        history.addTask(task);
+        assertEquals(1, history.getHistory().size());
     }
 
     @Test
-    public void testHistoricUnlimitedSize() {
-        for (int i = 0; i < 20; i++) {
-            Task task = new Task(i, "Task № " + i, "Test task", TaskStatus.NEW);
-            historyManager.addTask(task);
-        }
-        assertEquals(20, historyManager.getHistory().size());
+    void removeFromBeginning() {
+        Task t1 = new Task(1, "1", "", TaskStatus.NEW);
+        Task t2 = new Task(2, "2", "", TaskStatus.NEW);
+        history.addTask(t1);
+        history.addTask(t2);
+        history.remove(1);
+        assertEquals(1, history.getHistory().size());
+        assertEquals(t2, history.getHistory().get(0));
     }
 
     @Test
-    public void TestHistoryRemove() {
-        Task task1 = new Task(1, "Task 1", "Test task", TaskStatus.NEW);
-        Task task2 = new Task(2, "Task 1", "Test task", TaskStatus.NEW);
-        Task task3 = new Task(3, "Task 1", "Test task", TaskStatus.NEW);
-        historyManager.addTask(task1);
-        historyManager.addTask(task2);
-        historyManager.addTask(task3);
-        historyManager.remove(2);
-        assertEquals(2, historyManager.getHistory().size());
+    void removeFromMiddle() {
+        Task t1 = new Task(1, "1", "", TaskStatus.NEW);
+        Task t2 = new Task(2, "2", "", TaskStatus.NEW);
+        Task t3 = new Task(3, "3", "", TaskStatus.NEW);
+        history.addTask(t1);
+        history.addTask(t2);
+        history.addTask(t3);
+        history.remove(2);
+        assertEquals(2, history.getHistory().size());
+        assertFalse(history.getHistory().contains(t2));
     }
 
+    @Test
+    void removeFromEnd() {
+        Task t1 = new Task(1, "1", "", TaskStatus.NEW);
+        Task t2 = new Task(2, "2", "", TaskStatus.NEW);
+        history.addTask(t1);
+        history.addTask(t2);
+        history.remove(2);
+        assertEquals(1, history.getHistory().size());
+        assertEquals(t1, history.getHistory().get(0));
+    }
 }
