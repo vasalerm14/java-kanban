@@ -1,15 +1,16 @@
 package ru.yandex.javacourse.schedule.tasks;
 
 public class Subtask extends Task {
-    protected int epicId;
 
-    public Subtask(int id, String name, String description, TaskStatus status, int epicId) {
-        super(id, name, description, status);
-        this.epicId = epicId;
-    }
+    protected final int epicId;
 
     public Subtask(String name, String description, TaskStatus status, int epicId) {
         super(name, description, status);
+        this.epicId = epicId;
+    }
+
+    public Subtask(int id, String name, String description, TaskStatus status, int epicId) {
+        super(id, name, description, status);
         this.epicId = epicId;
     }
 
@@ -18,17 +19,9 @@ public class Subtask extends Task {
     }
 
     @Override
-    public String toString() {
-        return "Subtask{" +
-                "id=" + id +
-                ", epicId=" + epicId +
-                ", name='" + name + '\'' +
-                ", status=" + status +
-                ", description='" + description + '\'' +
-                '}';
-    }
-
     public String toCsvString() {
-        return String.format("%d,%s,%s,%s,%s,%s", getId(), TaskType.SUBTASK, getName(), getStatus(), getDescription(), getEpicId());
+        String start = startTime == null ? "" : startTime.toString();
+        String dur = duration == null ? "" : String.valueOf(duration.toMinutes());
+        return id + ",SUBTASK," + name + "," + status + "," + description + "," + epicId + "," + start + "," + dur;
     }
 }
