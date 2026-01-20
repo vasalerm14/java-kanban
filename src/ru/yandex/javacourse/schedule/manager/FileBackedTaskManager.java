@@ -162,30 +162,39 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 if (lineArr.length > 7 && !lineArr[7].isEmpty()) {
                     duration = Duration.ofMinutes(Long.parseLong(lineArr[7]));
                 }
-                if ("TASK".equals(lineArr[1])) {
+                TaskType taskType = TaskType.valueOf(lineArr[1]);
+                Integer id = Integer.parseInt(lineArr[0]);
+                String name = lineArr[2];
+                String description = lineArr[4];
+                TaskStatus taskStatus = TaskStatus.valueOf(lineArr[3]);
+                Integer epicId = null;
+                if (lineArr.length > 5) {
+                    epicId = Integer.parseInt(lineArr[5]);
+                }
+                if (taskType == TaskType.TASK) {
                     Task task = new Task(
-                            Integer.parseInt(lineArr[0]),
-                            lineArr[2],
-                            lineArr[4],
-                            TaskStatus.valueOf(lineArr[3])
+                            id,
+                            name,
+                            description,
+                            taskStatus
                     );
                     task.setStartTime(startTime);
                     task.setDuration(duration);
                     manager.addWithoutSaving(task);
-                } else if ("EPIC".equals(lineArr[1])) {
+                } else if (taskType == TaskType.EPIC) {
                     Epic epic = new Epic(
-                            Integer.parseInt(lineArr[0]),
-                            lineArr[2],
-                            lineArr[4]
+                            id,
+                            name,
+                            description
                     );
                     manager.addWithoutSaving(epic);
-                } else if ("SUBTASK".equals(lineArr[1])) {
+                } else if (taskType == TaskType.SUBTASK) {
                     Subtask subtask = new Subtask(
-                            Integer.parseInt(lineArr[0]),
-                            lineArr[2],
-                            lineArr[4],
-                            TaskStatus.valueOf(lineArr[3]),
-                            Integer.parseInt(lineArr[5])
+                            id,
+                            name,
+                            description,
+                            taskStatus,
+                            epicId
                     );
                     subtask.setStartTime(startTime);
                     subtask.setDuration(duration);

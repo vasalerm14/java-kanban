@@ -104,4 +104,68 @@ public abstract class TaskManagerTest<T extends TaskManager> {
                 () -> manager.addNewTask(t2)
         );
     }
+
+    @Test
+    void shouldReturnEpicSubtasks() {
+        Epic epic = new Epic("Epic", "Desc");
+        manager.addNewEpic(epic);
+
+        Subtask s1 = new Subtask("S1", "Desc", TaskStatus.NEW, epic.getId());
+        Subtask s2 = new Subtask("S2", "Desc", TaskStatus.NEW, epic.getId());
+
+        manager.addNewSubtask(s1);
+        manager.addNewSubtask(s2);
+
+        List<Subtask> subs = manager.getEpicSubtasks(epic.getId());
+
+        assertEquals(2, subs.size());
+        assertTrue(subs.contains(s1));
+        assertTrue(subs.contains(s2));
+    }
+
+    @Test
+    void shouldDeleteTask() {
+        Task task = new Task("Task", "Desc", TaskStatus.NEW);
+        manager.addNewTask(task);
+
+        manager.deleteTask(task.getId());
+
+        assertTrue(manager.getTasks().isEmpty());
+    }
+
+    @Test
+    void shouldDeleteEpicWithSubtasks() {
+        Epic epic = new Epic("Epic", "Desc");
+        manager.addNewEpic(epic);
+
+        manager.addNewSubtask(new Subtask("Sub", "Desc", TaskStatus.NEW, epic.getId()));
+
+        manager.deleteEpic(epic.getId());
+
+        assertTrue(manager.getEpics().isEmpty());
+        assertTrue(manager.getSubtasks().isEmpty());
+    }
+
+    @Test
+    void shouldDeleteAllTasks() {
+        manager.addNewTask(new Task("T", "D", TaskStatus.NEW));
+        manager.deleteTasks();
+        assertTrue(manager.getTasks().isEmpty());
+    }
+
+    @Test
+    void shouldDeleteAllEpics() {
+        manager.addNewEpic(new Epic("T", "D"));
+        manager.deleteEpics();
+        assertTrue(manager.getEpics().isEmpty());
+    }
+
+    @Test
+    void shouldDeleteAllSubtasks() {
+        Epic epic = new Epic("Epic", "Desc");
+        manager.addNewEpic(epic);
+        manager.addNewSubtask(new Subtask("Sub", "Desc", TaskStatus.NEW, epic.getId()));
+        manager.deleteSubtasks();
+        assertTrue(manager.getSubtasks().isEmpty());
+    }
 }

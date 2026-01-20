@@ -20,12 +20,11 @@ public class InMemoryTaskManager implements TaskManager {
     private int generatorId = 0;
     private final HistoryManager historyManager = Managers.getDefaultHistory();
     private final TreeSet<Task> prioritizedTasks =
-            new TreeSet<>((t1, t2) -> {
-                if (t1.getStartTime().isEqual(t2.getStartTime())) {
-                    return Integer.compare(t1.getId(), t2.getId());
-                }
-                return t1.getStartTime().isBefore(t2.getStartTime()) ? -1 : 1;
-            });
+            new TreeSet<>(
+                    Comparator
+                            .comparing(Task::getStartTime)
+                            .thenComparing(Task::getId)
+            );
 
 
     @Override
@@ -195,7 +194,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void deleteTasks() {
-        prioritizedTasks.clear();
+        prioritizedTasks.removeAll(tasks.values());
         tasks.clear();
     }
 
